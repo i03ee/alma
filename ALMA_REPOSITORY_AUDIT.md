@@ -1,76 +1,144 @@
-# ALMA Repository Audit
+# ALMA Repository Audit — Phase 0
 
 Audit date: 2026-08-18
-Branch inspected: `work`
-Latest commit inspected: `c91896e`
+Repository path inspected: `/workspace/alma`
+Current branch inspected: `work`
+Latest commit inspected before this audit file: `e1ffcd9`
 
-## Current state
+## 1. Repository structure
 
-The repository contains an initial TypeScript monorepo foundation with a NestJS API skeleton, shared package, database package, Docker Compose, CI workflow, and introductory documentation. The current branch is not `main`; this preserves the requested separation between development work and the production branch.
+Current repository contents after reverting prior Phase 1 implementation artifacts:
 
-## Existing files
+```text
+.
+├── .git/
+├── ALMA_REPOSITORY_AUDIT.md
+└── README.md
+```
 
-- Root project files: `README.md`, `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `.gitignore`, `.env.example`.
-- API app: `apps/api/package.json`, `apps/api/tsconfig.json`, and `apps/api/src/*`.
-- Shared package: `packages/shared/package.json`, `packages/shared/tsconfig.json`, `packages/shared/src/*`.
-- Database package: `packages/database/package.json`, `packages/database/tsconfig.json`, `packages/database/src/index.ts`, `packages/database/migrations/0001_foundation.sql`.
-- Local infrastructure: `docker-compose.yml`.
-- CI: `.github/workflows/ci.yml`.
-- Documentation: `docs/architecture.md`.
+The only product file that existed before creating this audit was `README.md`.
 
-## Detected technology
+## 2. Current technology
 
-- Runtime/tooling: Node.js, pnpm workspace, TypeScript.
-- Backend framework: NestJS skeleton.
-- Database: PostgreSQL with PostGIS extension in the first migration.
-- Realtime/cache target: Redis service in Docker Compose.
-- Object storage target: MinIO service in Docker Compose.
-- CI: GitHub Actions.
+No application technology is currently implemented in the working tree.
 
-## Detected problems
+Detected state:
 
-1. Dependency installation could not be verified in this environment because npm/Corepack registry access is blocked by a proxy `403`.
-2. No lockfile exists yet because dependency installation did not complete.
-3. The database migration only covers a foundation subset; several required production entities are still missing.
-4. No OpenAPI contract exists yet for the initial API list.
-5. No ADRs exist yet for key architectural choices.
-6. Docker Compose currently provides dependencies but not API/worker containers.
-7. No authentication, authorization, idempotency, rate limiting, or request correlation middleware exists yet.
-8. No migrations runner exists yet; migrations are SQL files only.
-9. Load, integration, database, and API tests are not implemented yet.
+- No `package.json`.
+- No lockfile (`pnpm-lock.yaml`, `package-lock.json`, or `yarn.lock`).
+- No TypeScript configuration.
+- No backend application code.
+- No Flutter application code.
+- No admin web application code.
+- No database migrations.
+- No Docker or Docker Compose configuration.
+- No CI workflow.
+- No test framework configuration.
 
-## Architecture recommendation
+The repository is effectively an empty product repository with a placeholder README.
 
-Continue with a modular monolith. Keep the API, workers, dispatch, realtime, and AI code in a single repository with strong module boundaries. Avoid microservices until measured bottlenecks or operational isolation needs justify extraction. PostgreSQL/PostGIS should be the durable source of truth, Redis should hold latest realtime state and ephemeral coordination, and object storage should hold evidence/media files.
+## 3. Current git state
 
-## Risks
+- Current branch: `work`.
+- Current HEAD before this audit file was created: `e1ffcd9`.
+- The previous all-in-one foundation implementation was reverted because the current instruction explicitly restricts this pass to PHASE 0 only.
+- No remotes are configured in this local checkout based on `git remote -v` output.
 
-- Public repository risk: do not commit production secrets or real customer/driver data.
-- Scale risk: design targets are ambitious and must not be represented as achieved without measured load tests.
-- Realtime risk: GPS traffic can overload PostgreSQL if latest-state caching and batching are not enforced.
-- Financial risk: wallet balances must be derived from immutable ledger transactions, not direct mutation.
-- Dispatch fairness risk: optimizing only for nearest driver can harm driver trust and marketplace health.
-- Dependency risk: CI will fail until a lockfile is generated in an environment with npm registry access.
+## 4. Existing functionality
 
-## Missing components
+Existing functionality is limited to repository metadata:
 
-- ADRs for modular monolith, PostgreSQL/PostGIS, realtime location, dispatch, and ledger.
-- Complete database schema for drivers, vehicles, orders, assignments, evidence, payments, ratings, disputes, events, and risk.
-- API modules and OpenAPI documentation for auth, orders, drivers, evidence, tracking, ratings, and disputes.
-- Observability: correlation IDs, metrics, tracing, readiness/liveness checks.
-- Security: validation, RBAC, rate limiting, token/session model, idempotency keys, audit middleware.
-- Docker images for API and worker processes.
-- Migration runner and database tests.
-- Load test scaffolding and documented performance methodology.
+- `README.md` contains only the title `# alma`.
 
-## Proposed phase plan
+There is no runnable application, API endpoint, database schema, Docker environment, CI pipeline, or automated test suite currently present.
 
-1. Phase 1 foundation hardening: add repository audit, ADRs, OpenAPI contract, Dockerfile, and local API service wiring.
-2. Phase 2 database: add complete core schema, migration runner, seeds, and database tests.
-3. Phase 3 authentication: implement OTP provider abstraction, mock provider, request/verify flows, session model, and rate limits.
-4. Phase 4 users/customers/drivers: implement profiles, driver onboarding, documents, vehicles, availability.
-5. Phase 5 services/orders: implement generic service catalog and order creation/read/cancel APIs.
-6. Phase 6 order state machine: persist validated transitions, events, and audit records.
-7. Phase 7 dispatch: implement configurable candidate scoring and offer lifecycle.
-8. Phase 8 realtime: implement WebSocket gateway and Redis latest-state pattern.
-9. Continue through routing, purchase evidence, delivery verification, ledger, chat, ratings/disputes, admin, observability, security hardening, and load testing.
+## 5. Missing functionality
+
+The following items are missing and should be implemented only after PHASE 1 authorization:
+
+- Monorepo workspace configuration.
+- TypeScript configuration.
+- Backend API scaffold.
+- Shared types or validation packages.
+- Database package and migrations.
+- PostgreSQL/PostGIS local environment.
+- Redis local environment.
+- Object storage local environment.
+- Health/readiness/liveness endpoints.
+- Configuration management and `.env.example`.
+- Structured logging and request correlation.
+- Test framework and first tests.
+- CI workflow.
+- Docker/Docker Compose files.
+- ADRs for architectural decisions.
+- OpenAPI contract.
+- Security baseline: validation, rate limiting, authentication/session design, RBAC plan, idempotency strategy, and audit logging strategy.
+- Performance/load-test plan.
+
+## 6. Architecture risks
+
+- **No implementation baseline:** there is currently no application structure, so future work must start carefully and incrementally.
+- **No dependency lockfile:** reproducibility cannot be assessed until a package manager is selected and a lockfile is generated.
+- **No CI:** regressions cannot be automatically detected yet.
+- **No database schema:** core domain constraints, indexes, and auditability do not exist yet.
+- **No security baseline:** secrets handling, validation, authentication, authorization, and audit logging are not implemented.
+- **No observability:** there are no logs, metrics, traces, health checks, readiness checks, or liveness checks.
+- **Scale targets are unverified:** the product has large design targets, but there is no implementation or load-test evidence. No capacity claims should be made.
+- **Public repository risk:** assume all committed content is public; do not commit production secrets, private credentials, customer data, driver data, or proprietary provider credentials.
+
+## 7. Proposed PHASE 1 implementation
+
+When PHASE 1 is authorized, implement only a small foundation milestone:
+
+1. Create `.gitignore` and `.env.example` with placeholders only; do not commit real secrets.
+2. Add pnpm workspace metadata and a root `package.json`.
+3. Add strict base TypeScript configuration.
+4. Add a minimal backend API scaffold with a versioned health endpoint.
+5. Add a shared types package for API constants and initial domain enums.
+6. Add a database package with an initial migration skeleton for PostgreSQL/PostGIS.
+7. Add Docker Compose for PostgreSQL/PostGIS, Redis, and object storage.
+8. Add a minimal CI workflow for install, lint, typecheck, test, and build.
+9. Add ADRs documenting modular monolith, PostgreSQL/PostGIS, realtime location strategy, dispatch strategy, and ledger strategy.
+10. Add an initial OpenAPI contract for intended `/api/v1` routes.
+11. Run available validation commands.
+12. Commit PHASE 1 as a logical small commit.
+
+PHASE 1 should not implement full auth, orders, dispatch, mobile apps, admin UI, payments, or realtime tracking yet.
+
+## 8. Exact commands executed during PHASE 0
+
+```bash
+pwd
+git status --short --branch
+git branch --all --verbose
+git remote -v
+find . -maxdepth 4 -not -path './.git/*' -not -path './node_modules/*' -print | sort
+sed -n '1,220p' README.md 2>/dev/null || true
+find . -maxdepth 5 \( -name package.json -o -name pnpm-lock.yaml -o -name package-lock.json -o -name yarn.lock -o -name pnpm-workspace.yaml -o -name tsconfig.json -o -name tsconfig.base.json -o -name Dockerfile -o -name docker-compose.yml \) -not -path './node_modules/*' -print | sort
+find apps packages .github docs -maxdepth 5 -type f 2>/dev/null | sort || true
+git log --oneline --decorate --max-count=5
+git revert --no-edit b7ecf0b
+pwd
+git status --short --branch
+git branch --all --verbose
+git remote -v
+find . -maxdepth 4 -not -path './.git/*' -not -path './node_modules/*' -print | sort
+sed -n '1,220p' README.md
+find . -maxdepth 5 \( -name package.json -o -name pnpm-lock.yaml -o -name package-lock.json -o -name yarn.lock -o -name pnpm-workspace.yaml -o -name tsconfig.json -o -name tsconfig.base.json -o -name Dockerfile -o -name docker-compose.yml \) -not -path './node_modules/*' -print | sort
+```
+
+## 9. Test results
+
+No application tests were run because PHASE 0 is inspection-only and the repository currently has no application code or test configuration.
+
+Validation performed:
+
+- Repository inspection completed.
+- Git state inspection completed.
+- README inspection completed.
+- Package/config discovery completed; no package/config files are present.
+- Source, CI, Docker, and database discovery completed; no implementation files are present after reverting prior non-Phase-0 work.
+
+No dependency installation was attempted for PHASE 0.
+No Docker commands were run for PHASE 0.
+No application build, lint, typecheck, or test commands were run because there is no application to build or test.
